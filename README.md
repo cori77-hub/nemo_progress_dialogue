@@ -1,42 +1,93 @@
 # Nemo Transfer Speed Graph Patch
 
-This patch modifies Nemo file manager to add a real-time transfer speed / bandwidth graph during file operations (copy/move).
+A UI enhancement patch for **Nemo file manager** that adds a real-time **transfer speed / bandwidth graph** during file operations (copy, move, etc.).
 
-It extends the default progress dialog by adding live visualization of transfer speed over time, similar to functionality found in:
-Dolphin file manager (KDE)
-Windows File Explorer
+It upgrades the default progress dialog with live throughput visualization, similar to:
 
-By default, Nemo shows only:
-progress percentage
-estimated time remaining
-file count
+- Dolphin file manager (KDE)
+- Windows File Explorer
 
-This patch adds:
-real-time transfer speed (kB/s, MB/s)
-bandwidth graph over time (from start of operation)
-live performance visualization
+---
 
-FEATURES
-Real-time transfer speed monitoring
-Live bandwidth graph (time-based)
-Automatic scaling of graph values
-Works for copy and move operations
-Minimal performance overhead
-Optional debug output (if enabled)
+## ✨ Overview
 
-MOTIVATION
-Standard file operation UI does not show transfer behavior in detail.
+Nemo’s default file operation dialog shows only basic progress information:
+
+- Progress percentage
+- Estimated time remaining
+- File count
+
+This patch enhances it by adding a **real-time bandwidth graph**, making transfer performance visible over time.
+
+---
+
+## 📊 Features
+
+- Real-time transfer speed monitoring (KB/s, MB/s)
+- Live bandwidth graph over time
+- Automatic graph scaling based on throughput
+- Works for copy and move operations
+- Minimal performance overhead
+- Optional debug logging (if enabled)
+
+---
+
+## 💡 Motivation
+
+When working with large file transfers, the default UI hides useful performance information.
 
 This patch improves visibility for:
-large file transfers (backups, ISOs, archives)
-external drives (USB, HDD, SSD)
-network transfers (SMB/NFS)
 
-Instead of only showing progress %, this patch exposes actual throughput changes during the operation.
+- Large backups and archives
+- External drives (USB, HDD, SSD)
+- Network transfers (SMB, NFS)
 
-COMPATIBILITY
-Target: Nemo file manager (Cinnamon desktop environment)
+Instead of only showing *progress %,* users can now see **how fast the transfer is actually performing and how it changes over time**.
 
-NOTE
-This patch only extends the UI layer for file operations.
-It does not modify core file transfer logic.
+---
+
+## 🧠 What this adds
+
+Before:
+- Progress bar only
+- Estimated time remaining
+
+After:
+- Progress bar
+- Real-time speed indicator
+- Bandwidth history graph
+
+---
+
+## ⚙️ Compatibility
+
+- Nemo File Manager
+- Cinnamon Desktop Environment
+
+---
+
+## 📝 Notes
+
+This patch only modifies the **UI layer of file operations**.
+
+It does not change:
+- file transfer logic
+- backend I/O implementation
+
+---
+
+## 📌 Status
+
+Work-in-progress / experimental patch (adjust as needed)
+
+---
+
+## 📷 Preview
+
+_Add screenshots or GIFs here if available._
+
+---
+
+## 📜 License
+
+Specify your license here (e.g. GPL, MIT, etc.)
