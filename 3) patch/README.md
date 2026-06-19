@@ -13,13 +13,12 @@ If there is sufficient interest, a future version of the patch may be developed 
 ## Related source files
 
 Until then, you can explore the relevant changes in the following source files:
+- src/nemo-progress-info-widget.c
+- src/nemo-progress-info-widget.h
 
-src/nemo-progress-info-widget.c
-src/nemo-progress-info-widget.h
-
-libnemo-private/nemo-file-operations.c
-libnemo-private/nemo-progress-info.c
-libnemo-private/nemo-progress-info.h
+- libnemo-private/nemo-file-operations.c
+- libnemo-private/nemo-progress-info.c
+- libnemo-private/nemo-progress-info.h
 
 ---
 
