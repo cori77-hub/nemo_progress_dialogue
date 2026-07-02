@@ -9,4 +9,3 @@ These binaries are provided for *Fedora users* who prefer not to compile the sou
 They are intended for convenience and quick testing of the feature.
 
 ⚠️ Use at your own discretion and ensure you trust the provided builds before installing.
-
