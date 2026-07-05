@@ -8,8 +8,6 @@ The main challenge is supporting multiple distribution-specific variants and sub
 
 If there is sufficient interest, a future version of the patch may be developed to extend Nemo's file transfer dialog with real-time bandwidth visualization across multiple distributions.
 
----
-
 ## Related source files
 
 Until then, you can explore the relevant changes in the following source files:
@@ -19,8 +17,6 @@ Until then, you can explore the relevant changes in the following source files:
 - libnemo-private/nemo-file-operations.c
 - libnemo-private/nemo-progress-info.c
 - libnemo-private/nemo-progress-info.h
-
----
 
 ## Alternative
 
