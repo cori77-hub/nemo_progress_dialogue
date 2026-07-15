@@ -1,0 +1,40 @@
+--- /tmp/nemo-6.6.3+zena/libnemo-private/nemo-file-operations.c	2026-01-08 14:29:12.000000000 +0100
++++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-file-operations.c	2026-07-15 22:27:25.553650928 +0200
+@@ -184,6 +184,9 @@
+ 	OpKind op;
+ 	guint64 last_report_time;
+ 	int last_reported_files_left;
++	/* bandwidth graph */
++	goffset last_speed_bytes;
++	gdouble last_speed_elapsed;
+ } TransferInfo;
+ 
+ #define SECONDS_NEEDED_FOR_RELIABLE_TRANSFER_RATE 8
+@@ -1718,6 +1721,8 @@
+             time_left_s = g_strdup (_("Paused"));
+         } else {
+             transfer_rate = transfer_info->num_files / elapsed;
++            /* bandwidth graph */
++            nemo_progress_info_set_speed (job->progress, transfer_rate);
+             remaining_time = files_left / transfer_rate;
+ 
+             /* To translators: %T will expand to a time like "2 minutes".
+@@ -3340,7 +3345,18 @@
+ 
+ 	elapsed = nemo_progress_info_get_elapsed_time (job->progress);
+ 	transfer_rate = 0;
++	/* bandwidth graph */
++	nemo_progress_info_set_speed (job->progress, transfer_rate);
+ 	if (elapsed > 0) {
++		/* bandwidth graph */
++		gdouble delta_bytes = transfer_info->num_bytes - transfer_info->last_speed_bytes;
++		gdouble delta_time  = elapsed - transfer_info->last_speed_elapsed;
++		if (delta_time > 0.3) {
++			gdouble instant_rate = delta_bytes / delta_time;
++			nemo_progress_info_set_speed (job->progress, instant_rate);
++			transfer_info->last_speed_bytes   = transfer_info->num_bytes;
++			transfer_info->last_speed_elapsed = elapsed;
++		}
+ 		transfer_rate = transfer_info->num_bytes / elapsed;
+ 	}
+ 

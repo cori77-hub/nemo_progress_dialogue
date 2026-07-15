@@ -1,0 +1,16 @@
+--- /tmp/nemo-6.6.3+zena/src/nemo-progress-info-widget.h	2026-01-08 14:29:12.000000000 +0100
++++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-progress-info-widget.h	2026-07-15 22:27:25.552844143 +0200
+@@ -68,6 +68,13 @@
+     GtkWidget *status; /* GtkLabel */
+     GtkWidget *details; /* GtkLabel */
+     GtkWidget *progress_bar;
++
++    /* bandwidth graph */
++    #define MAX_GRAPH_POINTS 200
++    GtkWidget *speed_graph;
++    double graph_data[MAX_GRAPH_POINTS];
++    int graph_count;
++    double graph_ymax;
+ };
+ 
+ GType nemo_progress_info_widget_get_type (void);

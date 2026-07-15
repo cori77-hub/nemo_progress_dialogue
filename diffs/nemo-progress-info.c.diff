@@ -1,0 +1,37 @@
+--- /tmp/nemo-6.6.3+zena/libnemo-private/nemo-progress-info.c	2026-01-08 14:29:12.000000000 +0100
++++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-progress-info.c	2026-07-15 22:27:25.554580243 +0200
+@@ -70,6 +70,9 @@
+ 	gboolean changed_at_idle;
+ 	gboolean progress_at_idle;
+     gboolean queue_at_idle;
++
++	/* bandwidth graph */
++	gdouble transfer_rate;
+ };
+ 
+ struct _NemoProgressInfoClass
+@@ -683,4 +686,23 @@
+     g_mutex_unlock (&info->info_lock);
+ 
+     return elapsed;
++}
++
++void
++nemo_progress_info_set_speed (NemoProgressInfo *info,
++                               gdouble           bytes_per_sec)
++{
++    g_mutex_lock (&info->info_lock);
++    info->transfer_rate = bytes_per_sec;
++    g_mutex_unlock (&info->info_lock);
++}
++
++gdouble
++nemo_progress_info_get_speed (NemoProgressInfo *info)
++{
++    gdouble ret;
++    g_mutex_lock (&info->info_lock);
++    ret = info->transfer_rate;
++    g_mutex_unlock (&info->info_lock);
++    return ret;
+ }
+\ Kein Zeilenumbruch am Dateiende.
