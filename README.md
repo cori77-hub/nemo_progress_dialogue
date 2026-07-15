@@ -7,9 +7,15 @@ It upgrades the default progress dialog with live throughput visualization, simi
 - Dolphin file manager (KDE)
 - Windows File Explorer
 
+## Credits
+
+**Original author:** Mario Lohajner ([@mlohajner](https://github.com/mlohajner)) — [Original repository](https://github.com/mlohajner/nemo_progress_dialogue)
+
+**Mint 22.3 port:** Daniel ([@cori77-hub](https://github.com/cori77-hub)) — This fork adapts the original patch (targeting Fedora Nemo 6.4.5) to **Linux Mint 22.3 / Nemo 6.6.3+zena**.
+
 ## Overview
 
-Nemo’s default file operation dialog shows only basic progress information:
+Nemo's default file operation dialog shows only basic progress information:
 
 - Progress percentage
 - Estimated time remaining
@@ -57,8 +63,77 @@ After:
 
 ## Compatibility
 
-- Nemo File Manager
+- **Nemo 6.6.3+zena** (Linux Mint 22.3, Ubuntu 24.04 base)
 - While Nemo is typically used within Cinnamon, this patch only depends on Nemo and can run independently in other compatible environments.
+
+## Patched Files
+
+The following source files are modified:
+
+| File | Change |
+|------|--------|
+| `libnemo-private/nemo-progress-info.h` | `set_speed()` / `get_speed()` declarations |
+| `libnemo-private/nemo-progress-info.c` | `transfer_rate` field + speed getter/setter |
+| `libnemo-private/nemo-file-operations.c` | `TransferInfo` extended + instant speed calculation |
+| `src/nemo-progress-info-widget.h` | Graph data fields (`speed_graph`, `graph_data`, etc.) |
+| `src/nemo-progress-info-widget.c` | `update_progress()`, `on_graph_draw()`, `constructed()` |
+
+## Installation (Linux Mint 22.3)
+
+### Prerequisites
+
+```bash
+# Enable source repositories
+sudo cp /etc/apt/sources.list.d/official-package-repositories.list \
+        /etc/apt/sources.list.d/official-package-repositories-src.list
+sudo sed -i 's/^deb /deb-src /' /etc/apt/sources.list.d/official-package-repositories-src.list
+sudo apt-get update
+
+# Install build dependencies
+sudo apt-get build-dep nemo
+sudo apt-get install -y devscripts
+```
+
+### Build
+
+```bash
+# Get Nemo source
+apt source nemo
+cd nemo-6.6.3+zena
+
+# Apply patches (see "Patched Files" above)
+# ... apply each patch manually or copy from this repo ...
+
+# Build
+dpkg-buildpackage -us -uc -b
+cd ..
+```
+
+### Install / Uninstall
+
+Use the included management script:
+
+```bash
+# Install the patched packages (backs up originals first)
+./manage-nemo-patch.sh install
+
+# Restore original packages
+./manage-nemo-patch.sh uninstall
+
+# Check current status
+./manage-nemo-patch.sh status
+```
+
+After installation, restart Nemo:
+
+```bash
+nemo -q && nemo
+```
+
+### Notes
+
+- The update rate depends on how often GIO reports progress. With many small files, the graph updates near-continuously. With a single very large file, GIO may only report every 15–20 seconds — this is a GIO limitation, not a patch issue.
+- Always create a Timeshift snapshot before replacing system packages.
 
 ## Notes
 
@@ -67,3 +142,7 @@ This patch only modifies the **UI layer of file operations**.
 It does not change:
 - file transfer logic
 - backend I/O implementation
+
+## License
+
+Same license as Nemo (GPL-2.0+).
