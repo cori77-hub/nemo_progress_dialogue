@@ -49,18 +49,17 @@ Instead of only showing *progress %,* users can now see **how fast the transfer 
 
 ## What this adds
 
-Before:
-- Progress bar only
-- Estimated time remaining
-
-![Nemo Progress Dialog](1)%20motivation%20%26%20screenshots/classic1.png)
-
-After:
+Default (graph collapsed):
 - Progress bar
-- Real-time speed indicator
-- Collapsible bandwidth history graph
+- File count and transfer status
+- Real-time speed / time remaining
 
-![Nemo Progress Dialog](1)%20motivation%20%26%20screenshots/dialogue3.png)
+![Nemo Progress Dialog — collapsed](screenshots/collapsed.png)
+
+Expanded:
+- All of the above, plus live bandwidth history graph
+
+![Nemo Progress Dialog — expanded](screenshots/expanded.png)
 
 ## Compatibility
 
