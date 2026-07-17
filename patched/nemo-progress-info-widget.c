@@ -179,12 +179,15 @@ on_graph_draw (GtkWidget *widget, cairo_t *cr, NemoProgressInfoWidget *self)
 
 	/* graph max label */
 	char max_label[32];
-	if (max_speed > 1024 * 1024)
+	if (delete_mode) {
+		g_snprintf (max_label, sizeof (max_label), "%.0f files/s", max_speed);
+	} else if (max_speed > 1024 * 1024) {
 		g_snprintf (max_label, sizeof (max_label), "%.1f MB/s", max_speed / 1000000);
-	else if (max_speed > 1024)
+	} else if (max_speed > 1024) {
 		g_snprintf (max_label, sizeof (max_label), "%.1f kB/s", max_speed / 1000);
-	else
+	} else {
 		g_snprintf (max_label, sizeof (max_label), "%.0f B/s", max_speed);
+	}
 
 	cairo_set_source_rgba (cr, accent.red, accent.green, accent.blue, 1);
 	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);

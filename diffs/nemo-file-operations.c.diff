@@ -1,5 +1,5 @@
 --- /home/corillian/projects/nemo-progress-dialogue/tmp_orig/nemo-6.6.3+zena/libnemo-private/nemo-file-operations.c	2026-01-08 14:29:12.000000000 +0100
-+++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-file-operations.c	2026-07-17 08:35:04.713723212 +0200
++++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-file-operations.c	2026-07-17 09:01:28.209339546 +0200
 @@ -184,6 +184,9 @@
  	OpKind op;
  	guint64 last_report_time;
