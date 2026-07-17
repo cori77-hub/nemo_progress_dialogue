@@ -280,19 +280,6 @@ progress_ui_handler_hide_status (NemoProgressUIHandler *self)
 	}
 }
 
-static gboolean
-hide_progress_window_after_timeout (gpointer data)
-{
-	NemoProgressUIHandler *self = data;
-
-	if (self->priv->active_infos == 0 &&
-	    gtk_widget_get_visible (self->priv->progress_window)) {
-		gtk_widget_hide (self->priv->progress_window);
-	}
-
-	return G_SOURCE_REMOVE;
-}
-
 static void
 progress_info_finished_cb (NemoProgressInfo *info,
 			   NemoProgressUIHandler *self)
@@ -308,9 +295,7 @@ progress_info_finished_cb (NemoProgressInfo *info,
         ensure_first_separator_hidden (self);
 	} else {
 		if (gtk_widget_get_visible (self->priv->progress_window)) {
-			/* Keep the progress window visible for 3 seconds after completion
-			 * so the user can see the final speed graph. */
-			g_timeout_add_seconds (3, hide_progress_window_after_timeout, self);
+			gtk_widget_hide (self->priv->progress_window);
 		} else {
 			progress_ui_handler_hide_status (self);
 			progress_ui_handler_show_complete_notification (self);

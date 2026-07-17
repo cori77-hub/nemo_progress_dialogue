@@ -63,6 +63,12 @@ Expanded:
 
 ![Nemo Progress Dialog — expanded](screenshots/expanded.png)
 
+Delete mode:
+- Delete / trash / empty-trash operations show speed in **files/sec** and use an inverted accent color on the graph.
+- Delete jobs run asynchronously so the Nemo window stays responsive.
+
+![Nemo Progress Dialog — delete mode showing files/sec](screenshots/delete-mode.png)
+
 ## Compatibility
 
 - **Nemo 6.6.3+zena** (Linux Mint 22.3, Ubuntu 24.04 base)
