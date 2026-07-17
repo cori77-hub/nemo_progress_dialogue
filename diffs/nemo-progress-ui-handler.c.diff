@@ -1,0 +1,34 @@
+--- /home/corillian/projects/nemo-progress-dialogue/tmp_orig/nemo-6.6.3+zena/src/nemo-progress-ui-handler.c	2026-01-08 14:29:12.000000000 +0100
++++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-progress-ui-handler.c	2026-07-17 07:23:55.802793800 +0200
+@@ -215,9 +215,13 @@
+ 	xapp_gtk_window_set_icon_name (XAPP_GTK_WINDOW (progress_window),
+                                    "system-run");
+ 
+-	main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
++	main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+ 	gtk_container_add (GTK_CONTAINER (progress_window),
+                        main_box);
++	gtk_container_set_border_width (GTK_CONTAINER (progress_window), 0);
++	g_object_set (main_box,
++                  "margin-bottom", -8,
++                  NULL);
+ 	self->priv->window_vbox = main_box;
+ 
+     frame = gtk_frame_new (NULL);
+@@ -231,7 +235,7 @@
+                   "margin-left", 5,
+                   "margin-right", 5,
+                   "margin-top", 5,
+-                  "margin-bottom", 5,
++                  "margin-bottom", 0,
+                   NULL);
+ 
+     gtk_box_pack_start (GTK_BOX (main_box), frame, FALSE, FALSE, 0);
+@@ -249,6 +253,7 @@
+ 	GtkWidget *progress;
+ 
+ 	progress = nemo_progress_info_widget_new (info);
++	gtk_widget_set_margin_bottom (progress, -10);
+ 
+ 	progress_ui_handler_ensure_window (self);
+ 

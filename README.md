@@ -28,9 +28,10 @@ This patch enhances it by adding a **real-time bandwidth graph**, making transfe
 - Real-time transfer speed monitoring (KB/s, MB/s)
 - Live bandwidth graph over time
 - Automatic graph scaling based on throughput
+- Collapsible graph/details view (default: collapsed)
+- Compact progress dialog layout
 - Works for copy and move operations
 - Minimal performance overhead
-- Optional debug logging (if enabled)
 
 ---
 
@@ -52,14 +53,14 @@ Before:
 - Progress bar only
 - Estimated time remaining
 
-![Nemo Progress Dialog](1%29%20motivation%20%26%20screenshots/classic1.png)
+![Nemo Progress Dialog](1)%20motivation%20%26%20screenshots/classic1.png)
 
 After:
 - Progress bar
 - Real-time speed indicator
-- Bandwidth history graph
+- Collapsible bandwidth history graph
 
-![Nemo Progress Dialog](1%29%20motivation%20%26%20screenshots/dialogue3.png)
+![Nemo Progress Dialog](1)%20motivation%20%26%20screenshots/dialogue3.png)
 
 ## Compatibility
 
@@ -76,7 +77,8 @@ The following source files are modified:
 | `libnemo-private/nemo-progress-info.c` | `transfer_rate` field + speed getter/setter |
 | `libnemo-private/nemo-file-operations.c` | `TransferInfo` extended + instant speed calculation |
 | `src/nemo-progress-info-widget.h` | Graph data fields (`speed_graph`, `graph_data`, etc.) |
-| `src/nemo-progress-info-widget.c` | `update_progress()`, `on_graph_draw()`, `constructed()` |
+| `src/nemo-progress-info-widget.c` | `update_progress()`, `on_graph_draw()`, `constructed()`, collapsible details |
+| `src/nemo-progress-ui-handler.c` | Tighter progress window layout |
 
 ## Installation (Linux Mint 22.3)
 
@@ -132,6 +134,7 @@ nemo -q && nemo
 
 ### Notes
 
+- The graph is collapsed by default. Click **Details ▼** to expand it and **Details ▲** to collapse it again.
 - The update rate depends on how often GIO reports progress. With many small files, the graph updates near-continuously. With a single very large file, GIO may only report every 15–20 seconds — this is a GIO limitation, not a patch issue.
 - Always create a Timeshift snapshot before replacing system packages.
 

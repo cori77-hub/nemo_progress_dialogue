@@ -1,5 +1,5 @@
---- /tmp/nemo-6.6.3+zena/libnemo-private/nemo-progress-info.h	2026-01-08 14:29:12.000000000 +0100
-+++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-progress-info.h	2026-07-15 22:27:25.555428459 +0200
+--- /home/corillian/projects/nemo-progress-dialogue/tmp_orig/nemo-6.6.3+zena/libnemo-private/nemo-progress-info.h	2026-01-08 14:29:12.000000000 +0100
++++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-progress-info.h	2026-07-17 06:55:07.536035261 +0200
 @@ -86,5 +86,8 @@
  
  gdouble       nemo_progress_info_get_elapsed_time (NemoProgressInfo *info);

@@ -62,6 +62,24 @@ update_data (NemoProgressInfoWidget *self)
 }
 
 static void
+toggle_details (GtkWidget *button, NemoProgressInfoWidget *self)
+{
+	NemoProgressInfoWidgetPriv *priv = self->priv;
+	gboolean expanded;
+
+	expanded = gtk_widget_get_visible (priv->details_box) &&
+		   gtk_revealer_get_child_revealed (GTK_REVEALER (priv->details_box));
+
+	if (expanded) {
+		gtk_revealer_set_reveal_child (GTK_REVEALER (priv->details_box), FALSE);
+		gtk_button_set_label (GTK_BUTTON (button), _("Details ▼"));
+	} else {
+		gtk_revealer_set_reveal_child (GTK_REVEALER (priv->details_box), TRUE);
+		gtk_button_set_label (GTK_BUTTON (button), _("Details ▲"));
+	}
+}
+
+static void
 update_progress (NemoProgressInfoWidget *self)
 {
 	NemoProgressInfoWidgetPriv *priv = self->priv;
@@ -172,7 +190,7 @@ static void
 on_info_started (NemoProgressInfoWidget *self) {
 	NemoProgressInfoWidgetPriv *priv = self->priv;
 	priv->graph_ymax = 0;
-	gtk_widget_set_size_request (priv->speed_graph, -1, 80);
+	gtk_widget_set_size_request (priv->speed_graph, -1, 70);
 	gtk_stack_set_visible_child_name (GTK_STACK (priv->stack), "running");
 }
 
@@ -225,7 +243,7 @@ nemo_progress_info_widget_constructed (GObject *obj)
     gtk_container_add (GTK_CONTAINER (self), main_box);
 
     priv->separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
-    gtk_box_pack_start (GTK_BOX (main_box), priv->separator, FALSE, FALSE, 5);
+    gtk_box_pack_start (GTK_BOX (main_box), priv->separator, FALSE, FALSE, 0);
 
     priv->stack = gtk_stack_new ();
     gtk_stack_set_transition_type (GTK_STACK (priv->stack), GTK_STACK_TRANSITION_TYPE_CROSSFADE);
@@ -243,7 +261,7 @@ nemo_progress_info_widget_constructed (GObject *obj)
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start (GTK_BOX (view), hbox, TRUE, TRUE, 0);
 
-    vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
+    vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
     gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
 
     gchar *initial_details = nemo_progress_info_get_initial_details (self->priv->info);
@@ -287,10 +305,10 @@ nemo_progress_info_widget_constructed (GObject *obj)
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_box_pack_start (GTK_BOX (view), hbox, TRUE, TRUE, 0);
 
-    vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
+    vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
     gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
 
-	label = gtk_label_new ("status");
+    label = gtk_label_new ("status");
 	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
 	gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_WORD_CHAR);
     gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
@@ -301,28 +319,50 @@ nemo_progress_info_widget_constructed (GObject *obj)
 	progress_bar = gtk_progress_bar_new ();
 	priv->progress_bar = progress_bar;
 	gtk_progress_bar_set_pulse_step (GTK_PROGRESS_BAR (progress_bar), 0.05);
-
-	/* bandwidth graph */
-	gboolean started = nemo_progress_info_get_is_started (self->priv->info);
-	priv->speed_graph = gtk_drawing_area_new ();
-	if (started)
-		gtk_widget_set_size_request (priv->speed_graph, -1, 80);
-	else
-		gtk_widget_set_size_request (priv->speed_graph, -1, 0);
-	gtk_box_pack_start (GTK_BOX (vbox), priv->speed_graph, TRUE, FALSE, 2);
-	g_signal_connect (priv->speed_graph, "draw", G_CALLBACK (on_graph_draw), self);
-
 	gtk_box_pack_start (GTK_BOX (vbox), progress_bar, TRUE, FALSE, 2);
 
-    label = gtk_label_new ("details");
-    gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
-    gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
-    gtk_label_set_max_width_chars (GTK_LABEL (label), 50);
+	label = gtk_label_new ("details");
+	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+	gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_WORD_CHAR);
+	gtk_label_set_max_width_chars (GTK_LABEL (label), 70);
 
-    gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, FALSE, 2);
-    priv->details = label;
+	PangoAttrList *attrs = pango_attr_list_new ();
+	pango_attr_list_insert (attrs, pango_attr_scale_new (PANGO_SCALE_SMALL));
+	gtk_label_set_attributes (GTK_LABEL (label), attrs);
+	pango_attr_list_unref (attrs);
 
-    bb = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, FALSE, 0);
+	priv->details = label;
+
+	/* collapsible details box: graph only */
+	priv->details_box = gtk_revealer_new ();
+	gtk_revealer_set_transition_duration (GTK_REVEALER (priv->details_box), 200);
+	gtk_revealer_set_reveal_child (GTK_REVEALER (priv->details_box), FALSE);
+
+	GtkWidget *details_inner = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+	gtk_container_add (GTK_CONTAINER (priv->details_box), details_inner);
+
+	gtk_box_pack_start (GTK_BOX (vbox), priv->details_box, FALSE, FALSE, 0);
+
+	/* bandwidth graph */
+	priv->speed_graph = gtk_drawing_area_new ();
+	gtk_widget_set_size_request (priv->speed_graph, -1, 70);
+	gtk_box_pack_start (GTK_BOX (details_inner), priv->speed_graph, TRUE, FALSE, 0);
+	g_signal_connect (priv->speed_graph, "draw", G_CALLBACK (on_graph_draw), self);
+
+	/* expander button */
+	priv->details_button = gtk_button_new_with_label (_("Details ▼"));
+	gtk_button_set_relief (GTK_BUTTON (priv->details_button), GTK_RELIEF_NONE);
+	gtk_widget_set_halign (priv->details_button, GTK_ALIGN_START);
+	gtk_widget_set_valign (priv->details_button, GTK_ALIGN_CENTER);
+	gtk_widget_set_vexpand (priv->details_button, TRUE);
+	gtk_widget_set_size_request (priv->details_button, -1, 20);
+	gtk_button_set_alignment (GTK_BUTTON (priv->details_button), 0.0, 0.5);
+	gtk_box_pack_start (GTK_BOX (vbox), priv->details_button, TRUE, FALSE, 0);
+	g_signal_connect (priv->details_button, "clicked", G_CALLBACK (toggle_details), self);
+
+	bb = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_widget_set_halign (bb, GTK_ALIGN_START);
     gtk_widget_set_valign (bb, GTK_ALIGN_CENTER);
     gtk_box_pack_end (GTK_BOX (hbox), bb, FALSE, FALSE, 0);
@@ -345,6 +385,7 @@ nemo_progress_info_widget_constructed (GObject *obj)
     g_signal_connect_swapped (priv->info, "changed", G_CALLBACK (update_data), self);
     g_signal_connect_swapped (priv->info, "progress-changed", G_CALLBACK (update_progress), self);
 
+    gboolean started = nemo_progress_info_get_is_started (self->priv->info);
     gtk_stack_set_visible_child_name (GTK_STACK (self->priv->stack), started ? "running" : "pending");
     g_signal_connect_swapped (priv->info, "started", G_CALLBACK (on_info_started), self);
 

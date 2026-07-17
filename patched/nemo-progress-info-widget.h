@@ -69,6 +69,10 @@ struct _NemoProgressInfoWidgetPriv {
     GtkWidget *details; /* GtkLabel */
     GtkWidget *progress_bar;
 
+    /* collapsible details */
+    GtkWidget *details_button;
+    GtkWidget *details_box;
+
     /* bandwidth graph */
     #define MAX_GRAPH_POINTS 200
     GtkWidget *speed_graph;
