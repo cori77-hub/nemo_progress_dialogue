@@ -215,13 +215,9 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
 	xapp_gtk_window_set_icon_name (XAPP_GTK_WINDOW (progress_window),
                                    "system-run");
 
-	main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+	main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
 	gtk_container_add (GTK_CONTAINER (progress_window),
                        main_box);
-	gtk_container_set_border_width (GTK_CONTAINER (progress_window), 0);
-	g_object_set (main_box,
-                  "margin-bottom", -8,
-                  NULL);
 	self->priv->window_vbox = main_box;
 
     frame = gtk_frame_new (NULL);
@@ -235,7 +231,7 @@ progress_ui_handler_ensure_window (NemoProgressUIHandler *self)
                   "margin-left", 5,
                   "margin-right", 5,
                   "margin-top", 5,
-                  "margin-bottom", 0,
+                  "margin-bottom", 5,
                   NULL);
 
     gtk_box_pack_start (GTK_BOX (main_box), frame, FALSE, FALSE, 0);
@@ -253,7 +249,6 @@ progress_ui_handler_add_to_window (NemoProgressUIHandler *self,
 	GtkWidget *progress;
 
 	progress = nemo_progress_info_widget_new (info);
-	gtk_widget_set_margin_bottom (progress, -10);
 
 	progress_ui_handler_ensure_window (self);
 
@@ -285,6 +280,19 @@ progress_ui_handler_hide_status (NemoProgressUIHandler *self)
 	}
 }
 
+static gboolean
+hide_progress_window_after_timeout (gpointer data)
+{
+	NemoProgressUIHandler *self = data;
+
+	if (self->priv->active_infos == 0 &&
+	    gtk_widget_get_visible (self->priv->progress_window)) {
+		gtk_widget_hide (self->priv->progress_window);
+	}
+
+	return G_SOURCE_REMOVE;
+}
+
 static void
 progress_info_finished_cb (NemoProgressInfo *info,
 			   NemoProgressUIHandler *self)
@@ -300,7 +308,9 @@ progress_info_finished_cb (NemoProgressInfo *info,
         ensure_first_separator_hidden (self);
 	} else {
 		if (gtk_widget_get_visible (self->priv->progress_window)) {
-			gtk_widget_hide (self->priv->progress_window);
+			/* Keep the progress window visible for 3 seconds after completion
+			 * so the user can see the final speed graph. */
+			g_timeout_add_seconds (3, hide_progress_window_after_timeout, self);
 		} else {
 			progress_ui_handler_hide_status (self);
 			progress_ui_handler_show_complete_notification (self);

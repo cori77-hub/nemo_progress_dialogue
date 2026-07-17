@@ -1,5 +1,5 @@
 --- /home/corillian/projects/nemo-progress-dialogue/tmp_orig/nemo-6.6.3+zena/src/nemo-progress-info-widget.c	2026-01-08 14:29:12.000000000 +0100
-+++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-progress-info-widget.c	2026-07-17 09:00:29.492525657 +0200
++++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-progress-info-widget.c	2026-07-17 09:58:21.506236733 +0200
 @@ -62,21 +62,148 @@
  }
  

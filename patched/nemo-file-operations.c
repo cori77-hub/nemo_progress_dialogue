@@ -1708,7 +1708,7 @@ report_delete_progress (CommonJob *job,
 					    f (_("Deleting files")));
 
 	elapsed = nemo_progress_info_get_elapsed_time (job->progress);
-	if (elapsed < SECONDS_NEEDED_FOR_RELIABLE_TRANSFER_RATE) {
+	if (elapsed < 1.0) {
         if (nemo_progress_info_get_is_paused (job->progress)) {
             nemo_progress_info_set_details (job->progress, _("Paused"));
         } else {
@@ -2225,9 +2225,6 @@ delete_job (GIOSchedulerJob *io_job,
 	common = (CommonJob *)job;
 	common->io_job = io_job;
 
-	nemo_progress_info_set_delete_mode (common->progress, TRUE);
-    nemo_progress_info_start (common->progress);
-
 	to_trash_files = NULL;
 	to_delete_files = NULL;
 
@@ -2328,6 +2325,9 @@ trash_or_delete_internal (GList                  *files,
 	}
 
     generate_initial_job_details (job->common.progress, try_trash ? OP_KIND_TRASH : OP_KIND_DELETE, job->files, NULL);
+
+    nemo_progress_info_set_delete_mode (job->common.progress, TRUE);
+    nemo_progress_info_start (job->common.progress);
 
     add_job_to_job_queue (delete_job, job, job->common.cancellable, job->common.progress,
                                 try_trash ? OP_KIND_TRASH : OP_KIND_DELETE);
@@ -7299,11 +7299,9 @@ should_start_immediately (OpKind kind, gpointer op_data)
             break;
         case OP_KIND_DELETE:
         case OP_KIND_TRASH:
-            ;
-            DeleteJob *deljob = (DeleteJob *) op_data;
-            ret = job_is_local (deljob->files, NULL) ||
-                      (job_has_no_folders (deljob->files) &&
-                       job_is_small (deljob->files));
+            /* Always run delete/trash jobs asynchronously so the progress dialog
+             * has a chance to show and update the speed graph. */
+            ret = FALSE;
             break;
         default:
             ret = FALSE;

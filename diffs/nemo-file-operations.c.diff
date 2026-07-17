@@ -1,5 +1,5 @@
 --- /home/corillian/projects/nemo-progress-dialogue/tmp_orig/nemo-6.6.3+zena/libnemo-private/nemo-file-operations.c	2026-01-08 14:29:12.000000000 +0100
-+++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-file-operations.c	2026-07-17 09:01:28.209339546 +0200
++++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-file-operations.c	2026-07-17 10:26:59.764317804 +0200
 @@ -184,6 +184,9 @@
  	OpKind op;
  	guint64 last_report_time;
@@ -10,6 +10,15 @@
  } TransferInfo;
  
  #define SECONDS_NEEDED_FOR_RELIABLE_TRANSFER_RATE 8
+@@ -1705,7 +1708,7 @@
+ 					    f (_("Deleting files")));
+ 
+ 	elapsed = nemo_progress_info_get_elapsed_time (job->progress);
+-	if (elapsed < SECONDS_NEEDED_FOR_RELIABLE_TRANSFER_RATE) {
++	if (elapsed < 1.0) {
+         if (nemo_progress_info_get_is_paused (job->progress)) {
+             nemo_progress_info_set_details (job->progress, _("Paused"));
+         } else {
 @@ -1718,6 +1721,8 @@
              time_left_s = g_strdup (_("Paused"));
          } else {
@@ -27,14 +36,25 @@
  	nemo_progress_info_start (job->progress);
  
  	memset (&transfer_info, 0, sizeof (transfer_info));
-@@ -2219,6 +2225,7 @@
+@@ -2219,8 +2225,6 @@
  	common = (CommonJob *)job;
  	common->io_job = io_job;
  
-+	nemo_progress_info_set_delete_mode (common->progress, TRUE);
-     nemo_progress_info_start (common->progress);
- 
+-    nemo_progress_info_start (common->progress);
+-
  	to_trash_files = NULL;
+ 	to_delete_files = NULL;
+ 
+@@ -2322,6 +2326,9 @@
+ 
+     generate_initial_job_details (job->common.progress, try_trash ? OP_KIND_TRASH : OP_KIND_DELETE, job->files, NULL);
+ 
++    nemo_progress_info_set_delete_mode (job->common.progress, TRUE);
++    nemo_progress_info_start (job->common.progress);
++
+     add_job_to_job_queue (delete_job, job, job->common.cancellable, job->common.progress,
+                                 try_trash ? OP_KIND_TRASH : OP_KIND_DELETE);
+ }
 @@ -3340,7 +3347,18 @@
  
  	elapsed = nemo_progress_info_get_elapsed_time (job->progress);
@@ -70,3 +90,18 @@
      nemo_progress_info_start (common->progress);
  
  	mark_desktop_file_trusted (common,
+@@ -7279,11 +7299,9 @@
+             break;
+         case OP_KIND_DELETE:
+         case OP_KIND_TRASH:
+-            ;
+-            DeleteJob *deljob = (DeleteJob *) op_data;
+-            ret = job_is_local (deljob->files, NULL) ||
+-                      (job_has_no_folders (deljob->files) &&
+-                       job_is_small (deljob->files));
++            /* Always run delete/trash jobs asynchronously so the progress dialog
++             * has a chance to show and update the speed graph. */
++            ret = FALSE;
+             break;
+         default:
+             ret = FALSE;
