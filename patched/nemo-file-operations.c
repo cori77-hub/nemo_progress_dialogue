@@ -7299,9 +7299,11 @@ should_start_immediately (OpKind kind, gpointer op_data)
             break;
         case OP_KIND_DELETE:
         case OP_KIND_TRASH:
-            /* Always run delete/trash jobs asynchronously so the progress dialog
-             * has a chance to show and update the speed graph. */
-            ret = FALSE;
+            ;
+            DeleteJob *deljob = (DeleteJob *) op_data;
+            ret = job_is_local (deljob->files, NULL) ||
+                      (job_has_no_folders (deljob->files) &&
+                       job_is_small (deljob->files));
             break;
         default:
             ret = FALSE;

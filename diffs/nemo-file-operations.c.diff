@@ -1,5 +1,5 @@
 --- /home/corillian/projects/nemo-progress-dialogue/tmp_orig/nemo-6.6.3+zena/libnemo-private/nemo-file-operations.c	2026-01-08 14:29:12.000000000 +0100
-+++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-file-operations.c	2026-07-17 10:26:59.764317804 +0200
++++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-file-operations.c	2026-07-17 10:55:04.596332136 +0200
 @@ -184,6 +184,9 @@
  	OpKind op;
  	guint64 last_report_time;
@@ -90,18 +90,3 @@
      nemo_progress_info_start (common->progress);
  
  	mark_desktop_file_trusted (common,
-@@ -7279,11 +7299,9 @@
-             break;
-         case OP_KIND_DELETE:
-         case OP_KIND_TRASH:
--            ;
--            DeleteJob *deljob = (DeleteJob *) op_data;
--            ret = job_is_local (deljob->files, NULL) ||
--                      (job_has_no_folders (deljob->files) &&
--                       job_is_small (deljob->files));
-+            /* Always run delete/trash jobs asynchronously so the progress dialog
-+             * has a chance to show and update the speed graph. */
-+            ret = FALSE;
-             break;
-         default:
-             ret = FALSE;

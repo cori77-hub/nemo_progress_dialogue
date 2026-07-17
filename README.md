@@ -65,7 +65,7 @@ Expanded:
 
 Delete mode:
 - Delete / trash / empty-trash operations show speed in **files/sec** and use an inverted accent color on the graph.
-- Delete jobs run asynchronously so the Nemo window stays responsive.
+- Very fast local deletions may finish before the graph becomes visible; the dialog still appears immediately so progress is shown.
 
 ![Nemo Progress Dialog — delete mode showing files/sec](screenshots/delete-mode.png)
 
