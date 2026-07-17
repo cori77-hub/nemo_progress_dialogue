@@ -1,6 +1,6 @@
 --- /home/corillian/projects/nemo-progress-dialogue/tmp_orig/nemo-6.6.3+zena/src/nemo-progress-info-widget.c	2026-01-08 14:29:12.000000000 +0100
-+++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-progress-info-widget.c	2026-07-17 08:03:55.678896221 +0200
-@@ -62,21 +62,136 @@
++++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-progress-info-widget.c	2026-07-17 08:34:00.104974639 +0200
+@@ -62,21 +62,145 @@
  }
  
  static void
@@ -80,6 +80,15 @@
 +	GdkRGBA accent;
 +	gtk_style_context_get_color (ctx, GTK_STATE_FLAG_LINK, &accent);
 +
++	/* invert accent color for delete operations */
++	gboolean delete_mode = nemo_progress_info_get_delete_mode (priv->info);
++	if (delete_mode) {
++		accent.red   = 1.0 - accent.red;
++		accent.green = 1.0 - accent.green;
++		accent.blue  = 1.0 - accent.blue;
++		accent.alpha = 1.0;
++	}
++
 +	/* create curve */
 +	cairo_move_to (cr, 0, h);
 +	double prev_x = -1, prev_y = -1;
@@ -142,7 +151,7 @@
  }
  
  static void
-@@ -128,7 +243,7 @@
+@@ -128,7 +252,7 @@
      gtk_container_add (GTK_CONTAINER (self), main_box);
  
      priv->separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
@@ -151,7 +160,7 @@
  
      priv->stack = gtk_stack_new ();
      gtk_stack_set_transition_type (GTK_STACK (priv->stack), GTK_STACK_TRANSITION_TYPE_CROSSFADE);
-@@ -146,7 +261,7 @@
+@@ -146,7 +270,7 @@
      hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
      gtk_box_pack_start (GTK_BOX (view), hbox, TRUE, TRUE, 0);
  
@@ -160,7 +169,7 @@
      gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
  
      gchar *initial_details = nemo_progress_info_get_initial_details (self->priv->info);
-@@ -190,10 +305,10 @@
+@@ -190,10 +314,10 @@
      hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
      gtk_box_pack_start (GTK_BOX (view), hbox, TRUE, TRUE, 0);
  
@@ -173,7 +182,7 @@
  	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
  	gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_WORD_CHAR);
      gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
-@@ -204,17 +319,50 @@
+@@ -204,17 +328,50 @@
  	progress_bar = gtk_progress_bar_new ();
  	priv->progress_bar = progress_bar;
  	gtk_progress_bar_set_pulse_step (GTK_PROGRESS_BAR (progress_bar), 0.05);

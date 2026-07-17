@@ -1,11 +1,15 @@
 --- /home/corillian/projects/nemo-progress-dialogue/tmp_orig/nemo-6.6.3+zena/libnemo-private/nemo-progress-info.h	2026-01-08 14:29:12.000000000 +0100
-+++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-progress-info.h	2026-07-17 06:55:07.536035261 +0200
-@@ -86,5 +86,8 @@
++++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-progress-info.h	2026-07-17 08:33:03.567178014 +0200
+@@ -86,5 +86,12 @@
  
  gdouble       nemo_progress_info_get_elapsed_time (NemoProgressInfo *info);
  
 +void          nemo_progress_info_set_speed        (NemoProgressInfo *info,
 +                                                   gdouble           bytes_per_sec);
 +gdouble       nemo_progress_info_get_speed        (NemoProgressInfo *info);
++
++void          nemo_progress_info_set_delete_mode  (NemoProgressInfo *info,
++                                                   gboolean          is_delete);
++gboolean      nemo_progress_info_get_delete_mode  (NemoProgressInfo *info);
  
  #endif /* NEMO_PROGRESS_INFO_H */

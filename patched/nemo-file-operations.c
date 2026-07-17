@@ -2011,6 +2011,7 @@ delete_files (CommonJob *job, GList *files, guint *files_skipped)
 		return;
 	}
 
+	nemo_progress_info_set_delete_mode (job->progress, TRUE);
 	nemo_progress_info_start (job->progress);
 
 	memset (&transfer_info, 0, sizeof (transfer_info));
@@ -2224,6 +2225,7 @@ delete_job (GIOSchedulerJob *io_job,
 	common = (CommonJob *)job;
 	common->io_job = io_job;
 
+	nemo_progress_info_set_delete_mode (common->progress, TRUE);
     nemo_progress_info_start (common->progress);
 
 	to_trash_files = NULL;
@@ -6863,6 +6865,7 @@ empty_trash_job (GIOSchedulerJob *io_job,
 	common = (CommonJob *)job;
 	common->io_job = io_job;
 
+	nemo_progress_info_set_delete_mode (common->progress, TRUE);
     nemo_progress_info_start (common->progress);
 
 	if (job->should_confirm && !job_aborted (common)) {
@@ -7099,6 +7102,7 @@ mark_trusted_job (GIOSchedulerJob *io_job,
 	common = (CommonJob *)job;
 	common->io_job = io_job;
 
+	nemo_progress_info_set_delete_mode (common->progress, TRUE);
     nemo_progress_info_start (common->progress);
 
 	mark_desktop_file_trusted (common,

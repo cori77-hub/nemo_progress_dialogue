@@ -1,5 +1,5 @@
 --- /home/corillian/projects/nemo-progress-dialogue/tmp_orig/nemo-6.6.3+zena/libnemo-private/nemo-file-operations.c	2026-01-08 14:29:12.000000000 +0100
-+++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-file-operations.c	2026-07-17 06:55:07.536228813 +0200
++++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-file-operations.c	2026-07-17 08:35:04.713723212 +0200
 @@ -184,6 +184,9 @@
  	OpKind op;
  	guint64 last_report_time;
@@ -19,7 +19,23 @@
              remaining_time = files_left / transfer_rate;
  
              /* To translators: %T will expand to a time like "2 minutes".
-@@ -3340,7 +3345,18 @@
+@@ -2006,6 +2011,7 @@
+ 		return;
+ 	}
+ 
++	nemo_progress_info_set_delete_mode (job->progress, TRUE);
+ 	nemo_progress_info_start (job->progress);
+ 
+ 	memset (&transfer_info, 0, sizeof (transfer_info));
+@@ -2219,6 +2225,7 @@
+ 	common = (CommonJob *)job;
+ 	common->io_job = io_job;
+ 
++	nemo_progress_info_set_delete_mode (common->progress, TRUE);
+     nemo_progress_info_start (common->progress);
+ 
+ 	to_trash_files = NULL;
+@@ -3340,7 +3347,18 @@
  
  	elapsed = nemo_progress_info_get_elapsed_time (job->progress);
  	transfer_rate = 0;
@@ -38,3 +54,19 @@
  		transfer_rate = transfer_info->num_bytes / elapsed;
  	}
  
+@@ -6847,6 +6865,7 @@
+ 	common = (CommonJob *)job;
+ 	common->io_job = io_job;
+ 
++	nemo_progress_info_set_delete_mode (common->progress, TRUE);
+     nemo_progress_info_start (common->progress);
+ 
+ 	if (job->should_confirm && !job_aborted (common)) {
+@@ -7083,6 +7102,7 @@
+ 	common = (CommonJob *)job;
+ 	common->io_job = io_job;
+ 
++	nemo_progress_info_set_delete_mode (common->progress, TRUE);
+     nemo_progress_info_start (common->progress);
+ 
+ 	mark_desktop_file_trusted (common,

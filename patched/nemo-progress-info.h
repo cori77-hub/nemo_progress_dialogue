@@ -90,4 +90,8 @@ void          nemo_progress_info_set_speed        (NemoProgressInfo *info,
                                                    gdouble           bytes_per_sec);
 gdouble       nemo_progress_info_get_speed        (NemoProgressInfo *info);
 
+void          nemo_progress_info_set_delete_mode  (NemoProgressInfo *info,
+                                                   gboolean          is_delete);
+gboolean      nemo_progress_info_get_delete_mode  (NemoProgressInfo *info);
+
 #endif /* NEMO_PROGRESS_INFO_H */

@@ -134,6 +134,15 @@ on_graph_draw (GtkWidget *widget, cairo_t *cr, NemoProgressInfoWidget *self)
 	GdkRGBA accent;
 	gtk_style_context_get_color (ctx, GTK_STATE_FLAG_LINK, &accent);
 
+	/* invert accent color for delete operations */
+	gboolean delete_mode = nemo_progress_info_get_delete_mode (priv->info);
+	if (delete_mode) {
+		accent.red   = 1.0 - accent.red;
+		accent.green = 1.0 - accent.green;
+		accent.blue  = 1.0 - accent.blue;
+		accent.alpha = 1.0;
+	}
+
 	/* create curve */
 	cairo_move_to (cr, 0, h);
 	double prev_x = -1, prev_y = -1;

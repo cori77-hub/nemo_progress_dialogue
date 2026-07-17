@@ -1,6 +1,6 @@
 # Nemo Transfer Speed Graph Patch
 
-A UI enhancement patch for **Nemo file manager** that adds a real-time **transfer speed / bandwidth graph** during file operations (copy, move, etc.).
+A UI enhancement patch for **Nemo file manager** that adds a real-time **transfer speed / bandwidth graph** during file operations (copy, move, delete).
 
 It upgrades the default progress dialog with live throughput visualization, similar to:
 
@@ -21,37 +21,39 @@ Nemo's default file operation dialog shows only basic progress information:
 - Estimated time remaining
 - File count
 
-This patch enhances it by adding a **real-time bandwidth graph**, making transfer performance visible over time.
+This patch enhances it by adding a **real-time bandwidth graph**, making operation performance visible over time.
 
 ## Features
 
-- Real-time transfer speed monitoring (KB/s, MB/s)
+- Real-time transfer and delete speed monitoring (KB/s, MB/s, files/s)
 - Live bandwidth graph over time
 - Automatic graph scaling based on throughput
 - Collapsible graph/details view (default: collapsed)
 - Compact progress dialog layout
-- Works for copy and move operations
+- Delete operations use an inverted accent color for instant visual distinction
+- Works for copy, move and delete operations
 - Minimal performance overhead
 
 ---
 
 ## Motivation
 
-When working with large file transfers, the default UI hides useful performance information.
+When working with large file transfers or deletions, the default UI hides useful performance information.
 
 This patch improves visibility for:
 
 - Large backups and archives
 - External drives (USB, HDD, SSD)
 - Network transfers (SMB, NFS)
+- Large batch deletions
 
-Instead of only showing *progress %,* users can now see **how fast the transfer is actually performing and how it changes over time**.
+Instead of only showing *progress %,* users can now see **how fast the operation is actually performing and how it changes over time**.
 
 ## What this adds
 
 Default (graph collapsed):
 - Progress bar
-- File count and transfer status
+- File count and operation status
 - Real-time speed / time remaining
 
 ![Nemo Progress Dialog — collapsed](screenshots/collapsed.png)
@@ -72,11 +74,11 @@ The following source files are modified:
 
 | File | Change |
 |------|--------|
-| `libnemo-private/nemo-progress-info.h` | `set_speed()` / `get_speed()` declarations |
-| `libnemo-private/nemo-progress-info.c` | `transfer_rate` field + speed getter/setter |
-| `libnemo-private/nemo-file-operations.c` | `TransferInfo` extended + instant speed calculation |
+| `libnemo-private/nemo-progress-info.h` | `set_speed()` / `get_speed()` / `set_delete_mode()` / `get_delete_mode()` declarations |
+| `libnemo-private/nemo-progress-info.c` | `transfer_rate` + `nemo_delete` fields + getter/setter |
+| `libnemo-private/nemo-file-operations.c` | `TransferInfo` extended + instant speed calculation + delete-mode flag for delete/trash/empty-trash |
 | `src/nemo-progress-info-widget.h` | Graph data fields (`speed_graph`, `graph_data`, etc.) |
-| `src/nemo-progress-info-widget.c` | `update_progress()`, `on_graph_draw()`, `constructed()`, collapsible details |
+| `src/nemo-progress-info-widget.c` | `update_progress()`, `on_graph_draw()`, `constructed()`, collapsible details, inverted delete color |
 | `src/nemo-progress-ui-handler.c` | Tighter progress window layout |
 
 ## Installation (Linux Mint 22.3)
@@ -134,6 +136,7 @@ nemo -q && nemo
 ### Notes
 
 - The graph is collapsed by default. Click **Details ▼** to expand it and **Details ▲** to collapse it again.
+- Delete, trash and empty-trash operations show an inverted accent graph color so you can tell destructive operations apart at a glance.
 - The update rate depends on how often GIO reports progress. With many small files, the graph updates near-continuously. With a single very large file, GIO may only report every 15–20 seconds — this is a GIO limitation, not a patch issue.
 - Always create a Timeshift snapshot before replacing system packages.
 
@@ -144,6 +147,7 @@ This patch only modifies the **UI layer of file operations**.
 It does not change:
 - file transfer logic
 - backend I/O implementation
+- delete/trash logic or confirmation behavior
 
 ## License
 

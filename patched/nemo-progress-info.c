@@ -73,6 +73,7 @@ struct _NemoProgressInfo
 
 	/* bandwidth graph */
 	gdouble transfer_rate;
+	gboolean nemo_delete;
 };
 
 struct _NemoProgressInfoClass
@@ -703,6 +704,25 @@ nemo_progress_info_get_speed (NemoProgressInfo *info)
     gdouble ret;
     g_mutex_lock (&info->info_lock);
     ret = info->transfer_rate;
+    g_mutex_unlock (&info->info_lock);
+    return ret;
+}
+
+void
+nemo_progress_info_set_delete_mode (NemoProgressInfo *info,
+                                     gboolean          is_delete)
+{
+    g_mutex_lock (&info->info_lock);
+    info->nemo_delete = is_delete;
+    g_mutex_unlock (&info->info_lock);
+}
+
+gboolean
+nemo_progress_info_get_delete_mode (NemoProgressInfo *info)
+{
+    gboolean ret;
+    g_mutex_lock (&info->info_lock);
+    ret = info->nemo_delete;
     g_mutex_unlock (&info->info_lock);
     return ret;
 }
