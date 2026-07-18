@@ -143,7 +143,7 @@ nemo -q && nemo
 
 - The graph is collapsed by default. Click **Details ▼** to expand it and **Details ▲** to collapse it again.
 - Delete, trash and empty-trash operations show an inverted accent graph color so you can tell destructive operations apart at a glance.
-- The update rate depends on how often GIO reports progress. With many small files, the graph updates near-continuously. With a single very large file, GIO may only report every 15–20 seconds — this is a GIO limitation, not a patch issue.
+- The update rate depends on how often GIO reports progress. With many small files, the graph updates near-continuously. With a single very large file, GIO may only report every 15–20 seconds — this is a filesystem/driver limitation, not a patch issue. For example, **ext4 → ext4** reports progress frequently, while **NTFS (especially the ntfs3 driver)** buffers heavily and reports only every few seconds to tens of seconds.
 - Always create a Timeshift snapshot before replacing system packages.
 
 ## Notes
