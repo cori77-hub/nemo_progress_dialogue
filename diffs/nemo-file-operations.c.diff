@@ -1,6 +1,6 @@
 --- /home/corillian/projects/nemo-progress-dialogue/tmp_orig/nemo-6.6.3+zena/libnemo-private/nemo-file-operations.c	2026-01-08 14:29:12.000000000 +0100
-+++ /home/corillian/projects/nemo-progress-dialogue/fork/patched/nemo-file-operations.c	2026-07-17 10:55:04.596332136 +0200
-@@ -184,6 +184,9 @@
++++ /home/corillian/projects/nemo-progress-dialogue/build/nemo-6.6.3+zena/libnemo-private/nemo-file-operations.c	2026-07-18 09:24:18.894054229 +0200
+@@ -184,11 +184,14 @@
  	OpKind op;
  	guint64 last_report_time;
  	int last_reported_files_left;
@@ -10,6 +10,12 @@
  } TransferInfo;
  
  #define SECONDS_NEEDED_FOR_RELIABLE_TRANSFER_RATE 8
+ #define US_PER_MS 1000
+-#define PROGRESS_UPDATE_THRESHOLD 250
++#define PROGRESS_UPDATE_THRESHOLD 200
+ 
+ #define MAXIMUM_DISPLAYED_FILE_NAME_LENGTH 50
+ 
 @@ -1705,7 +1708,7 @@
  					    f (_("Deleting files")));
  
