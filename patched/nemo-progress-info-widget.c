@@ -44,6 +44,7 @@ static GParamSpec *properties[NUM_PROPERTIES] = { NULL };
 G_DEFINE_TYPE (NemoProgressInfoWidget, nemo_progress_info_widget,
                GTK_TYPE_BOX);
 
+
 static void
 update_data (NemoProgressInfoWidget *self)
 {
@@ -325,8 +326,26 @@ nemo_progress_info_widget_constructed (GObject *obj)
 	gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_WORD_CHAR);
     gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
     gtk_label_set_max_width_chars (GTK_LABEL (label), 40);
+	gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+	gtk_label_set_lines (GTK_LABEL (label), 2);
 	gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, FALSE, 2);
 	priv->status = label;
+
+	/* collapsible details box: speed label + graph */
+	priv->details_box = gtk_revealer_new ();
+	gtk_revealer_set_transition_duration (GTK_REVEALER (priv->details_box), 200);
+	gtk_revealer_set_reveal_child (GTK_REVEALER (priv->details_box), FALSE);
+
+	GtkWidget *details_inner = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+	gtk_container_add (GTK_CONTAINER (priv->details_box), details_inner);
+
+	gtk_box_pack_start (GTK_BOX (vbox), priv->details_box, TRUE, FALSE, 0);
+
+	/* bandwidth graph */
+	priv->speed_graph = gtk_drawing_area_new ();
+	gtk_widget_set_size_request (priv->speed_graph, -1, 70);
+	gtk_box_pack_start (GTK_BOX (details_inner), priv->speed_graph, TRUE, TRUE, 0);
+	g_signal_connect (priv->speed_graph, "draw", G_CALLBACK (on_graph_draw), self);
 
 	progress_bar = gtk_progress_bar_new ();
 	priv->progress_bar = progress_bar;
@@ -337,7 +356,10 @@ nemo_progress_info_widget_constructed (GObject *obj)
 	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
 	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
 	gtk_label_set_line_wrap_mode (GTK_LABEL (label), PANGO_WRAP_WORD_CHAR);
-	gtk_label_set_max_width_chars (GTK_LABEL (label), 70);
+	gtk_label_set_max_width_chars (GTK_LABEL (label), 55);
+	gtk_label_set_width_chars (GTK_LABEL (label), 55);
+	gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
+	gtk_label_set_lines (GTK_LABEL (label), 2);
 
 	PangoAttrList *attrs = pango_attr_list_new ();
 	pango_attr_list_insert (attrs, pango_attr_scale_new (PANGO_SCALE_SMALL));
@@ -346,33 +368,6 @@ nemo_progress_info_widget_constructed (GObject *obj)
 
 	gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, FALSE, 0);
 	priv->details = label;
-
-	/* collapsible details box: graph only */
-	priv->details_box = gtk_revealer_new ();
-	gtk_revealer_set_transition_duration (GTK_REVEALER (priv->details_box), 200);
-	gtk_revealer_set_reveal_child (GTK_REVEALER (priv->details_box), FALSE);
-
-	GtkWidget *details_inner = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-	gtk_container_add (GTK_CONTAINER (priv->details_box), details_inner);
-
-	gtk_box_pack_start (GTK_BOX (vbox), priv->details_box, FALSE, FALSE, 0);
-
-	/* bandwidth graph */
-	priv->speed_graph = gtk_drawing_area_new ();
-	gtk_widget_set_size_request (priv->speed_graph, -1, 70);
-	gtk_box_pack_start (GTK_BOX (details_inner), priv->speed_graph, TRUE, FALSE, 0);
-	g_signal_connect (priv->speed_graph, "draw", G_CALLBACK (on_graph_draw), self);
-
-	/* expander button */
-	priv->details_button = gtk_button_new_with_label (_("Details ▼"));
-	gtk_button_set_relief (GTK_BUTTON (priv->details_button), GTK_RELIEF_NONE);
-	gtk_widget_set_halign (priv->details_button, GTK_ALIGN_START);
-	gtk_widget_set_valign (priv->details_button, GTK_ALIGN_CENTER);
-	gtk_widget_set_vexpand (priv->details_button, TRUE);
-	gtk_widget_set_size_request (priv->details_button, -1, 20);
-	gtk_button_set_alignment (GTK_BUTTON (priv->details_button), 0.0, 0.5);
-	gtk_box_pack_start (GTK_BOX (vbox), priv->details_button, TRUE, FALSE, 0);
-	g_signal_connect (priv->details_button, "clicked", G_CALLBACK (toggle_details), self);
 
 	bb = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
     gtk_widget_set_halign (bb, GTK_ALIGN_START);
@@ -388,6 +383,17 @@ nemo_progress_info_widget_constructed (GObject *obj)
     gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
     gtk_box_pack_start (GTK_BOX (bb), button, FALSE, FALSE, 2);
     g_signal_connect (button, "clicked", G_CALLBACK (cancel_clicked), self);
+
+	/* expander button */
+	priv->details_button = gtk_button_new_with_label (_("Details ▼"));
+	gtk_button_set_relief (GTK_BUTTON (priv->details_button), GTK_RELIEF_NONE);
+	gtk_widget_set_halign (priv->details_button, GTK_ALIGN_START);
+	gtk_widget_set_valign (priv->details_button, GTK_ALIGN_CENTER);
+	gtk_widget_set_vexpand (priv->details_button, TRUE);
+	gtk_widget_set_size_request (priv->details_button, -1, 20);
+	gtk_button_set_alignment (GTK_BUTTON (priv->details_button), 0.0, 0.5);
+	gtk_box_pack_start (GTK_BOX (vbox), priv->details_button, TRUE, FALSE, 0);
+	g_signal_connect (priv->details_button, "clicked", G_CALLBACK (toggle_details), self);
 
     gtk_widget_show_all (view);
 

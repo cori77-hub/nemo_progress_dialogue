@@ -138,6 +138,16 @@ progress_window_delete_event (GtkWidget *widget,
     self->priv->should_show_status_icon = TRUE;
     progress_ui_handler_update_status_icon (self);
 
+    /* Cancel any active jobs when the window is closed. A job left running
+     * in the background would otherwise block the job queue and prevent new
+     * file operations from starting. */
+    for (GList *l = self->priv->infos; l != NULL; l = l->next) {
+        NemoProgressInfo *info = NEMO_PROGRESS_INFO (l->data);
+        if (!nemo_progress_info_get_is_finished (info)) {
+            nemo_progress_info_cancel (info);
+        }
+    }
+
     return TRUE;
 }
 
@@ -296,9 +306,11 @@ progress_info_finished_cb (NemoProgressInfo *info,
 	} else {
 		if (gtk_widget_get_visible (self->priv->progress_window)) {
 			gtk_widget_hide (self->priv->progress_window);
-		} else {
+		} else if (!g_cancellable_is_cancelled (nemo_progress_info_get_cancellable (info))) {
 			progress_ui_handler_hide_status (self);
 			progress_ui_handler_show_complete_notification (self);
+		} else {
+			progress_ui_handler_hide_status (self);
 		}
 	}
 }
