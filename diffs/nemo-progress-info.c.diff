@@ -1,5 +1,5 @@
---- /home/corillian/projects/nemo-progress-dialogue/tmp_orig/nemo-6.6.3+zena/libnemo-private/nemo-progress-info.c	2026-01-08 14:29:12.000000000 +0100
-+++ /home/corillian/projects/nemo-progress-dialogue/build/nemo-6.6.3+zena/libnemo-private/nemo-progress-info.c	2026-07-17 08:35:15.252049923 +0200
+--- tmp_orig/nemo-6.6.3+zena/libnemo-private/nemo-progress-info.c	2026-01-08 14:29:12.000000000 +0100
++++ build/nemo-6.6.3+zena/libnemo-private/nemo-progress-info.c	2026-07-17 08:35:15.252049923 +0200
 @@ -70,6 +70,10 @@
  	gboolean changed_at_idle;
  	gboolean progress_at_idle;

@@ -1,5 +1,5 @@
---- /home/corillian/projects/nemo-progress-dialogue/tmp_orig/nemo-6.6.3+zena/src/nemo-progress-info-widget.h	2026-01-08 14:29:12.000000000 +0100
-+++ /home/corillian/projects/nemo-progress-dialogue/build/nemo-6.6.3+zena/src/nemo-progress-info-widget.h	2026-07-18 08:56:38.585588019 +0200
+--- tmp_orig/nemo-6.6.3+zena/src/nemo-progress-info-widget.h	2026-01-08 14:29:12.000000000 +0100
++++ build/nemo-6.6.3+zena/src/nemo-progress-info-widget.h	2026-07-18 08:56:38.585588019 +0200
 @@ -68,6 +68,17 @@
      GtkWidget *status; /* GtkLabel */
      GtkWidget *details; /* GtkLabel */
