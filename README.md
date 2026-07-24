@@ -85,7 +85,7 @@ The following source files are modified:
 | `libnemo-private/nemo-file-operations.c` | Transfer/delete speed calculation, instant progress dialog start, delete-mode flag for delete/trash/empty-trash, progress update threshold tuned to 200 ms |
 | `src/nemo-progress-info-widget.h` | Graph data fields (`speed_graph`, `graph_data`, `graph_count`, etc.) |
 | `src/nemo-progress-info-widget.c` | Graph drawing (`on_graph_draw`), collapsible details panel, compact layout, label wrapping to prevent window resizing, horizontal graph expansion, inverted delete color, Details button |
-| `src/nemo-progress-ui-handler.c` | Tighter progress window layout, cancel all unfinished jobs when the window is closed, suppress the "all completed" notification for cancelled jobs |
+| `src/nemo-progress-ui-handler.c` | Tighter progress window layout |
 
 ## Installation (Linux Mint 22.3)
 
